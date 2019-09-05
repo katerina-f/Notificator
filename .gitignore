@@ -1,0 +1,11 @@
+.vagrant/
+.idea/
+.vscode/
+
+__pycache__/
+venv/
+
+*.log
+
+*.env.prod
+*.env.dev

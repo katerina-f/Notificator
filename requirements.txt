@@ -1,0 +1,8 @@
+psycopg2-binary
+schedule
+daemon
+lockfile
+loguru
+pika
+pylint
+sqlalchemy
