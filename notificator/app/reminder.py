@@ -90,6 +90,7 @@ class Postman:
         channel.queue_declare(queue=subscriber.__name__, durable=True)
         return channel
 
+    @logger.catch(level='ERROR')
     def notify(self, connection, message):
         """
         Подключает всех клиентов к очередям отправки сообщений,
@@ -98,12 +99,10 @@ class Postman:
 
         for subscriber in self.subscribers:
             channel = self.create_queue(subscriber, connection)
-            print(channel)
             channel.basic_publish(exchange='',
                                   routing_key=subscriber.__name__,
                                   body=message,
                                   properties=pika.BasicProperties(
                                       delivery_mode=2,  # make message persistent
                                   ))
-        print('Сообщение отправлено в очередь')
         connection.close()

@@ -46,7 +46,6 @@ class EmailClient(AbstractClient):
     def update(self, message):
         """Создает объект отправителя, отправляет сообщение"""
         sender = Sender(message, 'Birthdays')
-        print(sender)
         try:
             sender.send_message()
         except Exception:
@@ -67,11 +66,8 @@ class EmailClient(AbstractClient):
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             host='notificator.mq'))
         channel = connection.channel()
-        print(channel)
         channel.queue_declare(queue=__class__.__name__, durable=True)
-        print('Клиент создал очередь')
         channel.basic_qos(prefetch_count=1)
-        print('Принимаем сообщение')
         channel.basic_consume(__class__.__name__, self.callback, auto_ack=False)
         try:
             channel.start_consuming()

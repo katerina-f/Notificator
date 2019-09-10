@@ -12,10 +12,8 @@ def send_notifications(session):
     notificator = Postman(config.NOTIFICATION_TIME)
     notificator.subscribe(EmailClient)
     result = notificator.get_data(config.INTERVAL, User, session)
-    logger.warning('подключение успешно')
     if result:
         client = EmailClient()
         client.subscribe_to_queue()
     else:
-        print('нет дней рождения')
         logger.warning('нет контента для отправки')
