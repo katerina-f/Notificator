@@ -1,7 +1,7 @@
 FROM python:3.6
-RUN mkdir /app
-COPY . /app
-WORKDIR /app
-RUN apt-get update
-RUN pip3 install -r requirements.txt
+WORKDIR /usr/src/app
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+
 CMD ["python3", "runserver.py"]
