@@ -6,7 +6,7 @@ from notificator.extensions import db
 from notificator.extensions import config
 from loguru import logger
 
-@logger.catch(level='ERROR')
+
 def main():
     session = db.create_session()
 

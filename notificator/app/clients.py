@@ -26,8 +26,11 @@ class AbstractClient(ABC):
         header = f'Не забудьте поздравить!\n'
         for day in msg_body['all_dates']:
             user_data = f'\tДень рождения через {day["date"]}:\n'
-            for user in day['users']:
-                user_data += f'\t{user["first_name"]} {user["last_name"]}\n'
+            if day['users']:
+                for user in day['users']:
+                    user_data += f'\t{user["first_name"]} {user["last_name"]}\n'
+            else:
+                user_data += f'Нет именниников!'
             header += user_data
         return header
 
@@ -49,7 +52,7 @@ class EmailClient(AbstractClient):
         except Exception:
             logger.warning(Exception.__str__(self))
 
-
+    @logger.catch(level='ERROR')
     def callback(self, ch, method, properties, body):
         """ Принимает сообщение из очереди, инициирует отправку сообщения."""
         logger.warning('подключение прошло успешно')
@@ -62,7 +65,7 @@ class EmailClient(AbstractClient):
     def subscribe_to_queue(self):
         """ Проводит операции с очередью - подключение, отправку ответа, закрытие соединения"""
         connection = pika.BlockingConnection(pika.ConnectionParameters(
-            host='0.0.0.0'))
+            host='notificator.mq'))
         channel = connection.channel()
         print(channel)
         channel.queue_declare(queue=__class__.__name__, durable=True)

@@ -5,7 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config(object):
 
     SQLALCHEMY_BASE_URI = 'postgresql+psycopg2://{}:{}@{}/{}'.format(
-        'test', '1234', '0.0.0.0', 'postgres')
+        'test', '1234', 'notificator.db', 'postgres')
 
     LOGFILE = 'log.log'
     MAIL_SERVER = 'smtp.yandex.ru'

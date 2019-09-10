@@ -15,7 +15,7 @@ class Sender:
     def __init__(self, message, header):
         self.login = config.MAIL_USERNAME
         self.password = config.MAIL_PASSWORD
-        self.subject = 'Subject'
+        self.subject = 'Birthdays'
         self.recipients = config.RECIPIENTS
         self.message = str(message)
         self.header = header

@@ -8,6 +8,7 @@ import pika
 
 from notificator.extensions import config
 
+from loguru import logger
 
 class BdayFinder:
     """
@@ -69,7 +70,7 @@ class Postman:
         если он есть, вызывает метод оповещения
         """
 
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='0.0.0.0'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='notificator.mq'))
         finder = BdayFinder(obj, interval, session)
         result = finder.creating_users_list()
         if result:
@@ -84,7 +85,7 @@ class Postman:
 
     def create_queue(self, subscriber, connection):
         """ Создает очередь для отправки клиенту """
-        # logger.warning('создалась очередь')
+        logger.warning('создалась очередь')
         channel = connection.channel()
         channel.queue_declare(queue=subscriber.__name__, durable=True)
         return channel

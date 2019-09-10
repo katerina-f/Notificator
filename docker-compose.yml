@@ -14,6 +14,8 @@ services:
       - 5432:5432
     volumes:
       - notificator.db:/var/lib/postgresql/data
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
     environment:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: 1234
@@ -30,6 +32,8 @@ services:
       - 25672:25672
     volumes:
       - notificator.mq:/var/lib/rabbitmq/data
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
 
   app:
     build:
@@ -37,10 +41,12 @@ services:
       dockerfile: Dockerfile
     volumes:
         - .:/app
+        - "/etc/timezone:/etc/timezone:ro"
+        - "/etc/localtime:/etc/localtime:ro"
     env_file:
         - ./.env
     ports:
-        - 80:80
+        - 127.0.0.1:80:80
     depends_on:
         - database
         - rabbitmq
