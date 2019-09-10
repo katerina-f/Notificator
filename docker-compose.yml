@@ -1,0 +1,49 @@
+version: "3"
+
+volumes:
+  notificator.db:
+    external: true
+  notificator.mq:
+    external: true
+
+services:
+  database:
+    container_name: notificator.db
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - notificator.db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: 1234
+
+  rabbitmq:
+    container_name: notificator.mq
+    image: rabbitmq:latest
+    command: rabbitmq-server
+    ports:
+      - 15672:15672
+      - 5672:5672
+      - 4369:4369
+      - 5671:5671
+      - 25672:25672
+    volumes:
+      - notificator.mq:/var/lib/rabbitmq/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+        - .:/app
+    env_file:
+        - ./.env
+    ports:
+        - 80:80
+    depends_on:
+        - database
+        - rabbitmq
+    links:
+        - database
+        - rabbitmq

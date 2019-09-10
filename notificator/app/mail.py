@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 
 from notificator.extensions import config
 
+from loguru import logger
 
 class Sender:
     """
@@ -16,10 +17,10 @@ class Sender:
         self.password = config.MAIL_PASSWORD
         self.subject = 'Subject'
         self.recipients = config.RECIPIENTS
-        self.message = message
+        self.message = str(message)
         self.header = header
 
-
+    @logger.catch(level='ERROR')
     def send_message(self):
         message_obj = MIMEMultipart()
         message_obj['From'] = self.login

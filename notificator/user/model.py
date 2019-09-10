@@ -14,3 +14,4 @@ class User(Base):
 
     def __repr__(self):
         return "<User(%r, %r)>" % (self.first_name, self.last_name)
+

@@ -1,10 +1,12 @@
 import time
 import schedule
 
-from notificator.reminder.send_notifications import send_notifications
+from notificator.app.send_notifications import send_notifications
 from notificator.extensions import db
 from notificator.extensions import config
+from loguru import logger
 
+@logger.catch(level='ERROR')
 def main():
     session = db.create_session()
 
@@ -19,7 +21,7 @@ def main():
             schedule.run_pending()
             time.sleep(1)
     except schedule.ScheduleError as ex:
-        # logger.warning(ex.__str__())
+        logger.warning(ex.__str__())
         with open(config.LOGFILE, 'w') as f:
             f.write(ex.__str__)
 
