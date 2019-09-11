@@ -1,14 +1,16 @@
+import json
+
 from datetime import datetime
 from datetime import timedelta
-import json
+
+import pika
 
 from sqlalchemy import and_
 from sqlalchemy import extract
-import pika
+from loguru import logger
 
 from notificator.extensions import config
 
-from loguru import logger
 
 class BdayFinder:
     """
@@ -22,7 +24,8 @@ class BdayFinder:
         self.interval = interval
         self.session = session
 
-    def find_users_for_date(self, remind_date):
+    def find_persons_for_date(self, remind_date):
+
         """
         Принимает количество дней до искомой даты,
         вычисляет день рождения, ищет пользователей с этим днем рождения в базе.
@@ -34,22 +37,26 @@ class BdayFinder:
         b_month = extract('month', self.obj.birth_date)
 
         query = self.session.query(self.obj).filter(and_(b_day == date.day, b_month == date.month))
-        users = query.all()
-        if not users:
+        persons = query.all()
+        if not persons:
+
             return
 
-        users = [{'bdate': '{}'.format(user.birth_date),
-                  'first_name': '{}'.format(user.first_name),
-                  'last_name': '{}'.format(user.last_name),
-                  'days_to_birthday': remind_date} for user in users]
-        return users
+        persons = [{'bdate': '{}'.format(person.birth_date),
+                  'first_name': '{}'.format(person.first_name),
+                  'last_name': '{}'.format(person.last_name),
+                  'days_to_birthday': remind_date} for person in persons]
 
-    def creating_users_list(self):
+        return persons
+
+    def creating_persons_list(self):
+
         """ генерирует json для передачи в очередь """
-        users_list = {'all_dates': [{'date': date, 'users': self.find_users_for_date(date)}
-                      for date in self.interval]}
-        if any(users_list['all_dates'][i]['users'] for i in range(len(users_list['all_dates']))):
-            return json.dumps(users_list)
+        persons_list = {'all_dates': [{'date': date, 'persons': self.find_persons_for_date(date)} for date in self.interval]}
+
+        if any(persons_list['all_dates'][i]['persons'] for i in range(len(persons_list['all_dates']))):
+            return json.dumps(persons_list)
+
         else:
             return {}
 
@@ -72,7 +79,8 @@ class Postman:
 
         connection = pika.BlockingConnection(pika.ConnectionParameters(host='notificator.mq'))
         finder = BdayFinder(obj, interval, session)
-        result = finder.creating_users_list()
+        result = finder.creating_persons_list()
+
         if result:
             self.notify(connection, result)
         return result

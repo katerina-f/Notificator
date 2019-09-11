@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from .config import Config
-from notificator.user.model import Base
+
+from notificator.config import Config
+from notificator.person.model import Base
 
 config = Config()
 

@@ -1,10 +1,11 @@
 import time
 import schedule
 
+from loguru import logger
+
 from notificator.app.send_notifications import send_notifications
 from notificator.extensions import db
 from notificator.extensions import config
-from loguru import logger
 
 
 def main():
@@ -22,8 +23,6 @@ def main():
             time.sleep(1)
     except schedule.ScheduleError as ex:
         logger.warning(ex.__str__())
-        with open(config.LOGFILE, 'w') as f:
-            f.write(ex.__str__)
 
 
 if __name__ == '__main__':

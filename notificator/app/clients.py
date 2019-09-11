@@ -1,11 +1,15 @@
-from abc import ABC
-from abc import abstractmethod
 import json
-from datetime import datetime
+
 import os
 
+from abc import ABC
+from abc import abstractmethod
+from datetime import datetime
+
 import pika
+
 from loguru import logger
+
 from notificator.app.mail import Sender
 
 
@@ -25,13 +29,13 @@ class AbstractClient(ABC):
         msg_body = json.loads(body)
         header = f'Не забудьте поздравить!\n'
         for day in msg_body['all_dates']:
-            user_data = f'\tДень рождения через {day["date"]}:\n'
-            if day['users']:
-                for user in day['users']:
-                    user_data += f'\t{user["first_name"]} {user["last_name"]}\n'
+            person_data = f'\tДень рождения через {day["date"]}:\n'
+            if day['persons']:
+                for person in day['persons']:
+                    person_data += f'\t{person["first_name"]} {person["last_name"]}\n'
             else:
-                user_data += f'Нет именниников!'
-            header += user_data
+                person_data += f'Нет именниников!'
+            header += person_data
         return header
 
     @abstractmethod
