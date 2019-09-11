@@ -28,7 +28,7 @@ class Sender:
         message_obj['Subject'] = self.subject
         message_obj.attach(MIMEText(self.message))
         print(message_obj)
-        smtp_obj = smtplib.SMTP(config.MAIL_SERVER, 587)
+        smtp_obj = smtplib.SMTP(config.MAIL_SERVER, config.MAIL_PORT)
         # identify ourselves to smtp client
         smtp_obj.ehlo()
         print(self.recipients)
