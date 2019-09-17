@@ -69,7 +69,7 @@ notificator/config.py
 
 ...
 
-INTERVAL = (0, 3, 7)  # here we are change interval between birthday and notifications days before - 3 days                         # and week respectively
+INTERVAL = (0, 3, 7)  # here we are change interval between birthday and notifications days before - 3 days and week respectively
 
 ...
 ```
