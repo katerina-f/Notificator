@@ -20,7 +20,27 @@ module code in lines 36 - 46
 
 ### Primarily
 
-This application uses Postgres. If you use a different database, change the name of the variables in the environment file, in the notificator / config.py module, the description of the service in docker-compose!
+This application uses Postgres. If you use a different database, change the name of the variables in the environment file, the description of the service in docker-compose!
+
+###### Example
+```
+./docker-compose.yml
+
+...
+
+services:
+  database:
+    container_name: notificator.db
+    image: mysql:5.7  # here
+    ports:
+      - 3306:3306  # here
+    volumes:
+      - notificator.db:/var/lib/mysql  # and here
+    env_file:
+      - ./.env
+
+...
+```
 
 Before install the app, you need to create the
 ```
@@ -34,13 +54,25 @@ MAIL_USERNAME=<your-mail-address>
 MAIL_PASSWORD=<your-mail-password>
 MAIL_PORT=<mail-port>
 MAIL_SERVER=<mail-server>
-POSTGRES_USER=<user-for-your-database>
-POSTGRES_PASSWORD=<password-for-your-db>
+POSTGRES_USER=<user-for-your-database>  # change to MYSQL_USER for example if you use different db
+POSTGRES_PASSWORD=<password-for-your-db>  # change to MYSQL_PASSWORD for the same reason
 TZ=<your-time-zone>
-SQLALCHEMY_BASE_URI=<uri-for-your-db>
+SQLALCHEMY_BASE_URI=<uri-for-your-db>  # use the driver spicific for your db
 ADMIN=<who-will-recieve-notifications>
 ```
 By default, the interval by day of birth is set as notification day to day and one day before the birthday. The interval is set to a tuple in notificator / config.py, you can change it as you wish
+
+###### Example
+
+```
+notificator/config.py
+
+...
+
+INTERVAL = (0, 3, 7)  # here we are change interval between birthday and notifications days before - 3 days                         # and week respectively
+
+...
+```
 
 ### Instalation
 
