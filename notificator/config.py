@@ -16,4 +16,4 @@ class Config(object):
     NOTIFICATION_TIME = os.environ.get('NOTIFICATION_TIME')
 
     ADMIN = os.environ.get('ADMIN')
-    RECIPIENTS = [ADMIN, os.environ.get('RECIPIENT')]
+    RECIPIENTS = [ADMIN]

@@ -39,14 +39,12 @@ class BdayFinder:
         query = self.session.query(self.obj).filter(and_(b_day == date.day, b_month == date.month))
         persons = query.all()
         if not persons:
-
             return
 
         persons = [{'bdate': '{}'.format(person.birth_date),
                   'first_name': '{}'.format(person.first_name),
                   'last_name': '{}'.format(person.last_name),
                   'days_to_birthday': remind_date} for person in persons]
-
         return persons
 
     def creating_persons_list(self):
