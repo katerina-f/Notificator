@@ -13,7 +13,7 @@ from loguru import logger
 from notificator.app.mail import Sender
 
 
-"""Шаблоны для отправки в разные клиенты."""
+"""Templates for sending to different clients."""
 
 class AbstractClient(ABC):
     @abstractmethod
@@ -25,16 +25,16 @@ class AbstractClient(ABC):
         pass
 
     def parsing_request(self, body):
-        """ Преобразует строку из очереди """
+        """ Converts a string from a queue """
         msg_body = json.loads(body)
-        header = f'Не забудьте поздравить!\n'
+        header = f'Do not forget to congratulate!\n'
         for day in msg_body['all_dates']:
-            person_data = f'\tДень рождения через {day["date"]}:\n'
+            person_data = f'\tBirthday through {day["date"]}:\n'
             if day['persons']:
                 for person in day['persons']:
                     person_data += f'\t{person["first_name"]} {person["last_name"]}\n'
             else:
-                person_data += f'Нет именниников!'
+                person_data += f'No birthday!'
             header += person_data
         return header
 
@@ -48,7 +48,7 @@ class EmailClient(AbstractClient):
         pass
 
     def update(self, message):
-        """Создает объект отправителя, отправляет сообщение"""
+        """Creates a sender object, sends a message"""
         sender = Sender(message, 'Birthdays')
         try:
             sender.send_message()
@@ -57,8 +57,8 @@ class EmailClient(AbstractClient):
 
     @logger.catch(level='ERROR')
     def callback(self, ch, method, properties, body):
-        """ Принимает сообщение из очереди, инициирует отправку сообщения."""
-        logger.warning('подключение прошло успешно')
+        """ Receives a message from the queue, initiates sending a message."""
+        logger.warning('connection was successful')
         msg_body = self.parsing_request(body)
         self.update(msg_body)
         ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -66,7 +66,7 @@ class EmailClient(AbstractClient):
 
     @logger.catch(level='ERROR')
     def subscribe_to_queue(self):
-        """ Проводит операции с очередью - подключение, отправку ответа, закрытие соединения"""
+        """ Carries out operations with the queue - connecting, sending a response, closing the connection"""
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             host='notificator.mq'))
         channel = connection.channel()
@@ -75,10 +75,10 @@ class EmailClient(AbstractClient):
         channel.basic_consume(__class__.__name__, self.callback, auto_ack=False)
         try:
             channel.start_consuming()
-            logger.warning('сообщение отправлено')
+            logger.warning('Message sent')
             connection.close()
         except:
-            logger.warning('не удалось отправить сообщение. соединение отключено')
+            logger.warning('failed to send message. connection disconnected')
             channel.stop_consuming()
             connection.close()
 

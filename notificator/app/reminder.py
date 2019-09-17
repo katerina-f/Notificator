@@ -14,9 +14,8 @@ from notificator.extensions import config
 
 class BdayFinder:
     """
-    Класс ищет пользователей по заданным ему параметрам в базе и
-    отдает полученные данные
-
+    The class searches for users according to the parameters specified in the database
+    and gives the received data
     """
 
     def __init__(self, model=None, interval=(), session=None):
@@ -27,8 +26,8 @@ class BdayFinder:
     def find_persons_for_date(self, remind_date):
 
         """
-        Принимает количество дней до искомой даты,
-        вычисляет день рождения, ищет пользователей с этим днем рождения в базе.
+        Accepts the number of days before the desired date,
+        calculates a birthday, searches for users with this birthday in the database.
         """
 
         date = datetime.today() + timedelta(days=int(remind_date))
@@ -49,7 +48,7 @@ class BdayFinder:
 
     def creating_persons_list(self):
 
-        """ генерирует json для передачи в очередь """
+        """ generates json to queue """
         persons_list = {'all_dates': [{'date': date, 'persons': self.find_persons_for_date(date)} for date in self.interval]}
 
         if any(persons_list['all_dates'][i]['persons'] for i in range(len(persons_list['all_dates']))):
@@ -61,8 +60,8 @@ class BdayFinder:
 
 class Postman:
     """
-    Подписывает на себя нужных клиентов, создает очередь передачи данных,
-    принимает время оповещения, отправляет сообщение клиенту
+    Signs on the right customers, creates a data transfer queue,
+    takes a notification time, sends a message to the client
     """
 
     def __init__(self, notification_time):
@@ -71,8 +70,8 @@ class Postman:
 
     def get_data(self, interval, obj, session):
         """
-        Создает очередь отправки сообщений, получает от поисковика результат,
-        если он есть, вызывает метод оповещения
+        Creates a queue for sending messages, receives the result from the search engine,
+        if it is, calls the notification method
         """
 
         connection = pika.BlockingConnection(pika.ConnectionParameters(host='notificator.mq'))
@@ -90,8 +89,8 @@ class Postman:
         self.subscribers.remove(subscriber)
 
     def create_queue(self, subscriber, connection):
-        """ Создает очередь для отправки клиенту """
-        logger.warning('создалась очередь')
+        """ Creates a queue for sending to a client """
+        logger.warning('queue created')
         channel = connection.channel()
         channel.queue_declare(queue=subscriber.__name__, durable=True)
         return channel
@@ -99,8 +98,8 @@ class Postman:
     @logger.catch(level='ERROR')
     def notify(self, connection, message):
         """
-        Подключает всех клиентов к очередям отправки сообщений,
-        отправлет в очереди сообщения.
+        Connects all clients to message sending queues,
+        sends queued messages.
         """
 
         for subscriber in self.subscribers:

@@ -9,8 +9,8 @@ from notificator.extensions import config
 
 class Sender:
     """
-    класс отвечающий за создание соединения с почтовым сервером
-    и отправки ему сообщений
+    class responsible for creating a connection to the mail server
+    and sending him messages
     """
 
     def __init__(self, message, header):

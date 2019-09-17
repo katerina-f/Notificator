@@ -7,7 +7,7 @@ from notificator.extensions import config
 
 
 def send_notifications(session):
-    """ Нотификатор - осуществляет всю логику отправки сообщений """
+    """ Notifier - implements all the logic of sending messages """
     logger.add("file.log", format="{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}", rotation='1 week')
     notificator = Postman(config.NOTIFICATION_TIME)
     notificator.subscribe(EmailClient)
@@ -16,4 +16,4 @@ def send_notifications(session):
         client = EmailClient()
         client.subscribe_to_queue()
     else:
-        logger.warning('нет контента для отправки')
+        logger.warning('no content to send')
